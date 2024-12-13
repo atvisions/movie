@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'movie',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'django_filters',
+    'movie',
+    'djoser',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -132,8 +136,46 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 配置允许的来源
 CORS_ALLOW_ALL_ORIGINS = True  # 或者指定来源
 
-# DRF设置
+# DRF分页设置
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 12,
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+        'AUTH_HEADER_TYPES': ('JWT',),
+}
+# 邮箱配置
+EMAIL_HOST = 'smtp.mxhichina.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'service@popo.work'  
+EMAIL_HOST_PASSWORD = '@Liuzhao-9575@'
+DEFAULT_FROM_EMAIL = 'service@popo.work'
+#用户注册配置
+DJOSER = {
+    'USERNAME_FIELD': 'username',
+    'LOGIN_FIELD': 'email',
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND':True,
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'password_reset/{uid}/{token}', #重置密码邮箱路径设置
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SET_PASSWORD_RETYPE':True, #用户设置密码
+    'SERIALIZERS': {
+        'user_create': 'account.serializers.CustomUserCreateSerializer', 
+    },
 }

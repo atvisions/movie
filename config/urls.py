@@ -26,5 +26,7 @@ router.register(r"category", views.CategaryViewSet)  # 注册 CategaryViewSet �
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),  # 使用 router.urls 来包含路由
+    path('api/', include('djoser.urls')),
+    path('api/', include('djoser.urls.jwt')),
 ]
 
